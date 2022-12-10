@@ -20,4 +20,11 @@ public class Track {
     public void setTrackName(String trackName) {
         this.trackName = trackName;
     }
+
+    @Override
+    public String toString() {
+        return "Track{" +
+                "trackName='" + trackName + '\'' +
+                '}';
+    }
 }

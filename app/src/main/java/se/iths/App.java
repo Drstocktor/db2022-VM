@@ -5,30 +5,40 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class App {
     static HashMap<Long, Artist> artists = new HashMap<>();
     static HashMap<Long, Album> albums = new HashMap<>();
     public static final String SQL_SELECT_ALL_ARTISTS = "select ArtistId, AlbumID, Name, Title from Artist join Album using (ArtistId)";
-    public static final String SQL_SELECT_ALL_TRACKS = "select TrackId, Name from Track join Album using (AlbumId)";
+    public static final String SQL_SELECT_ALL_TRACKS = "select * from Track";
 
     public static void main(String[] args) {
         importArtistsAndAlbums();
+        importTracksToAlbums();
+
+        albums.entrySet().stream().map(Map.Entry::toString).forEach(System.out::println);
+
+    }
+
+    private static void importTracksToAlbums() {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/Chinook", "iths", "iths");
             ResultSet resultSet = connection.createStatement().executeQuery(SQL_SELECT_ALL_TRACKS);
             while (resultSet.next()) {
                 long trackId = resultSet.getLong("TrackId");
                 String name = resultSet.getString("Name");
+                long albumId = resultSet.getLong("AlbumId");
 
                 Track track = new Track(trackId, name);
-
+                if (albums.containsKey(albumId)) {
+                    albums.get(albumId).addTrack(track);
+                }
 
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private static void importArtistsAndAlbums() {
@@ -57,7 +67,6 @@ public class App {
             artist = artists.get(artistID);
         } else {
             artists.put(artistID, artist);
-            System.out.println(artist);
         }
         return artist;
     }

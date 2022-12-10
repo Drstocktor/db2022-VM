@@ -29,7 +29,16 @@ public class Album {
         return tracks;
     }
 
-    public void setTracks(Map<Long, Track> tracks) {
-        this.tracks = tracks;
+    @Override
+    public String toString() {
+        return "Album{" +
+                "ALBUM_ID=" + ALBUM_ID +
+                ", albumTitle='" + albumTitle + '\'' +
+                ", tracks=" + tracks.get(ALBUM_ID).toString()+
+                '}';
+    }
+
+    public void addTrack(Track track) {
+        this.tracks.put(ALBUM_ID, track);
     }
 }
